@@ -5,7 +5,7 @@ const BASE_HEIGHT = 596;
 const getSubHeight = (children: number, spacing: number) =>
   BASE_HEIGHT / children - spacing * ((children - 1) / children);
 
-export default function Favourites() {
+export default function FavouritesSkeleton() {
   const theme = useMantineTheme();
   return (
     <Container my="md">

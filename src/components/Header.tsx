@@ -15,12 +15,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-const HEADER_HEIGHT = rem(60);
+const HEADER_HEIGHT = rem(84);
 
 const useStyles = createStyles((theme) => ({
   root: {
     position: 'relative',
     zIndex: 1,
+    marginBottom: '1rem',
+
+    [theme.fn.largerThan('sm')]: {
+      marginBottom: '2.5rem'
+    },
+    
   },
 
   dropdown: {
@@ -41,7 +47,6 @@ const useStyles = createStyles((theme) => ({
 
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%',
   },
@@ -112,14 +117,14 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
   ));
 
   return (
-    <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
+    <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container className={classes.header}>
-        <Image  src={logoImg} alt='logo' onClick={() =>{
+        <Image className='mr-' src={logoImg} alt='logo' onClick={() =>{
           setActive(null);
           close();
           router.push('/')
         } }/>
-        <Group spacing={5} className={classes.links}>
+        <Group position='center' spacing={60} className={`${classes.links} mx-auto`}>
           {items}
         </Group>
 

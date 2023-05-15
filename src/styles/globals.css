@@ -8,11 +8,13 @@
   --background-color-main: 245 245 245;
   --background-color-second: 255 255 255;
   font-size: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
+    --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
@@ -22,3 +24,4 @@ body {
   color: rgb(var(--foreground-rgb));
   background-color: rgb(var(--background-color-main));
 }
+
