@@ -10,7 +10,8 @@ import {
   rem,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import logoImg from '../../public/logo.png'
+import logoImg from '../../public/UnionLogo.svg';
+import logoText from '../../public/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -24,9 +25,8 @@ const useStyles = createStyles((theme) => ({
     marginBottom: '1rem',
 
     [theme.fn.largerThan('sm')]: {
-      marginBottom: '2.5rem'
+      marginBottom: '2.5rem',
     },
-    
   },
 
   dropdown: {
@@ -99,7 +99,7 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [active, setActive] = useState<string | null>(links[0].link);
   const { classes, cx } = useStyles();
-  const router = useRouter()
+  const router = useRouter();
 
   const items = links.map((link) => (
     <Link
@@ -119,12 +119,27 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
   return (
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container className={classes.header}>
-        <Image className='mr-' src={logoImg} alt='logo' onClick={() =>{
-          setActive(null);
-          close();
-          router.push('/')
-        } }/>
-        <Group position='center' spacing={60} className={`${classes.links} mx-auto`}>
+        <Image
+          className="mr-"
+          src={logoImg}
+          alt="logo"
+          onClick={() => {
+            setActive(null);
+            close();
+            router.push('/');
+          }}
+        />
+        <Image
+          className="mr-"
+          src={logoText}
+          alt="logo"
+          onClick={() => {
+            setActive(null);
+            close();
+            router.push('/');
+          }}
+        />
+        <Group position="center" spacing={60} className={`${classes.links} mx-auto`}>
           {items}
         </Group>
 

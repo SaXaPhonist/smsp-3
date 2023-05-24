@@ -1,25 +1,66 @@
-import { useState, useRef } from 'react';
+import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { Autocomplete, Loader } from '@mantine/core';
+import { apiClient } from '@/apiConfig/config';
 
-const IndustryFilter = (): JSX.Element => {
-  const timeoutRef = useRef<number>(-1);
+interface ICategory {
+  title_rus: string;
+  key: number;
+}
+
+interface ICategorySerialize {
+  value: string;
+  key: string;
+}
+
+interface IProps {
+  setValueForSearch: (value: string) => void
+}
+
+const IndustryFilter = ({ setValueForSearch }: IProps): JSX.Element => {
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<string[]>([]);
+  const [categories, setCategories] = useState<ICategorySerialize[]>();
 
   const handleChange = (val: string) => {
-    window.clearTimeout(timeoutRef.current);
     setValue(val);
-    setData([]);
+    setCategories([]);
 
-    if (val.trim().length === 0 || val.includes('@')) {
+    if (val.trim().length === 0) {
       setLoading(false);
     } else {
       setLoading(true);
-      timeoutRef.current = window.setTimeout(() => {
-        setLoading(false);
-        setData(['Финансы', 'Коммерция', 'Медицина']);
-      }, 1000);
+      getCategories();
+    }
+  };
+
+  const chooseItem = (item : ICategorySerialize) => {
+    if (item) {
+      setValueForSearch(item.key);
+    }
+  };
+
+    const getCategories = async () => {
+    try {
+      if(categories) return
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) {
+        throw new Error('Token is not provided');
+      }
+      const res = await apiClient.get('/catalogues', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setCategories(
+        res.data.map((category: ICategory) => ({
+          value: category.title_rus,
+          key: category.key.toString(),
+        })) as ICategorySerialize[],
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,10 +68,12 @@ const IndustryFilter = (): JSX.Element => {
     <div>
       <Autocomplete
         value={value}
-        data={data}
-        size='md'
+        data={categories || []}
+        size="md"
         data-elem="industry-select"
+        onItemSubmit={chooseItem}
         onChange={handleChange}
+        onFocus={getCategories}
         rightSection={loading ? <Loader size="1rem" /> : null}
         label="Отрасль"
         placeholder="Выбирите отрасль"

@@ -3,7 +3,7 @@
 const nextConfig = {
 
  images: {
-   unoptimized: false
+   unoptimized: true
 }
 }
 

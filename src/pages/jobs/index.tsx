@@ -3,25 +3,44 @@ import SearchInput from '@/components/SearchInput';
 import VacansyCard from '@/components/VacancyCard';
 import IndustryFilter from '@/components/filters/IndustryFilter';
 import SalaryFilter from '@/components/filters/SalaryFilter';
+import { MAX_PAYMENT_TO } from '@/const';
 import { IJob } from '@/types';
-import { Container, Title, Button, CloseButton, Text, Grid, Pagination, Loader } from '@mantine/core';
+import {
+  Container,
+  Title,
+  Button,
+  CloseButton,
+  Text,
+  Grid,
+  Pagination,
+  Loader,
+} from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
-import Link from 'next/link';
 import { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
+
+interface IPayments {
+  paymentFrom: number;
+  paymentTo: number;
+}
 
 export default function Jobs() {
   const [jobs, setJobs] = useState<IJob[]>();
+  const [categoryValue, setCategoryValue] = useState('');
   const [searchVal, setSearchVal] = useDebouncedState('', 300);
-  const [isLoading, setIsloading] = useState(false)
+  const [payments, setPayments] = useState<IPayments>({ paymentFrom: 0, paymentTo: 0 });
+  const [isLoading, setIsloading] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchVal(e.target.value)
-  }
+  const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchVal(e.target.value);
+  };
 
   const getJobs = async (search = '') => {
     try {
       const accessToken = localStorage.getItem('access_token');
-      setIsloading(true)
+      if (!accessToken) {
+        throw new Error('Token is not provided');
+      }
+      setIsloading(true);
       const res = await apiClient('/vacancies', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -29,23 +48,22 @@ export default function Jobs() {
         params: {
           published: 1,
           keyword: search,
-          payment_from: '',
-          payment_to: '',
-          catalogues: 33,
+          payment_from: payments.paymentFrom || 0,
+          payment_to: payments.paymentTo || MAX_PAYMENT_TO,
+          catalogues: parseInt(categoryValue) || 0,
         },
       });
       setJobs(res.data.objects);
-      setIsloading(false)
     } catch (error) {
-      setIsloading(false)
       console.log(error);
+    } finally {
+      setIsloading(false);
     }
   };
 
-  useEffect(() => {
-    console.log('in effect search', searchVal)
-    getJobs(searchVal)
-  }, [searchVal])
+  const handleChange = () => {
+    getJobs(searchVal);
+  };
 
   useEffect(() => {
     getJobs();
@@ -73,21 +91,25 @@ export default function Jobs() {
             <CloseButton />
           </div>
           <section className="mb-5">
-            <IndustryFilter />
+            <IndustryFilter setValueForSearch={setCategoryValue} />
           </section>
           <section className="mb-5">
-            <SalaryFilter />
+            <SalaryFilter setPayments={setPayments} />
           </section>
-          <Button data-elem="search-button" className="bg-defaultButtonColor">
+          <Button
+            data-elem="search-button"
+            className="bg-defaultButtonColor"
+            onClick={() => getJobs(searchVal)}
+          >
             Применить
           </Button>
         </Grid.Col>
         <Grid.Col className="w-full md:max-w-2xl flex-auto p-0 lg:max-w-3xl">
           <section className="mb-4">
-            <SearchInput  onChange={handleChange}/>
+            <SearchInput handleChangeValue={handleChangeValue} handleChange={handleChange} />
           </section>
           <section className="w-full [&>*]:mb-3 [&>*:last-child]:mb-0 mb-10">
-            {!isLoading &&jobs ?
+            {!isLoading && jobs ? (
               jobs.map(
                 ({
                   id,
@@ -102,6 +124,7 @@ export default function Jobs() {
                   ...otherProps
                 }) => (
                   <VacansyCard
+                    key={id}
                     {...{
                       id,
                       profession,
@@ -115,10 +138,14 @@ export default function Jobs() {
                     }}
                   />
                 ),
-              ): <div className='flex justify-center mt-12'>
-                  <Loader size={'xl'} variant={'dots'} />
+              )
+            ) : !isLoading && Array.isArray(jobs) && !jobs.length ? (
+              <p>Результатов не найдено</p>
+            ) : (
+              <div className="flex justify-center mt-12">
+                <Loader size={'xl'} variant={'dots'} />
               </div>
-               }
+            )}
           </section>
           <section className="flex justify-center">
             <Pagination total={5} />
