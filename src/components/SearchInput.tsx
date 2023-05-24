@@ -12,11 +12,11 @@ export default function SearchInput({
 }) {
   return (
     <TextInput
-      icon={<Image src={searchIcon} alt="search" />}
+      icon={<Image src={searchIcon}  alt="search" />}
       radius={'md'}
       onChange={handleChangeValue}
       data-elem="search-input"
-      classNames={{ input: 'h-12 m-w-3xl py-2 px-3 border-none' }}
+      classNames={{ input: 'h-12 m-w-3xl py-2 px-3 border-none', icon: 'z-0' }}
       rightSection={
         <Button
           data-elem="search-button"

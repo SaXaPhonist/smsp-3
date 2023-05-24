@@ -29,6 +29,7 @@ export default function Jobs() {
   const [searchVal, setSearchVal] = useDebouncedState('', 300);
   const [payments, setPayments] = useState<IPayments>({ paymentFrom: 0, paymentTo: 0 });
   const [isLoading, setIsloading] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const handleChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchVal(e.target.value);
@@ -71,14 +72,14 @@ export default function Jobs() {
 
   return (
     <Container className=" max-w-[69.75rem] p-0 m-y-[10rem]">
-      <Button className="bg-defaultButtonColor w-full md:hidden">Показать фильтры</Button>
+      <Button onClick={() => setIsFilterOpen((state) => !state )} className="bg-defaultButtonColor w-full md:hidden">Показать фильтры</Button>
       <Grid
         columns={2}
         className="w-full flex-col md:flex-row flex-nowrap m-0 md:gap-3 lg:gap-5 xl:gap-7"
       >
         <Grid.Col
           className={
-            'hidden md:flex md:w-full mb-7 md:mb-0 md:max-w-xs h-[22.5rem] p-5 flex-col bg-[rgb(var(--background-color-second))] rounded-xl'
+            `${isFilterOpen ? '':'hidden'} md:flex md:w-full mb-7 md:mb-0 md:max-w-xs h-[22.5rem] p-5 flex-col bg-[rgb(var(--background-color-second))] rounded-xl`
           }
         >
           <div className="mb-8 flex flex-row items-center justify-between">

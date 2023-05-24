@@ -39,6 +39,7 @@ const useStyles = createStyles((theme) => ({
     borderTopLeftRadius: 0,
     borderTopWidth: 0,
     overflow: 'hidden',
+    backgroundColor: '#fff',
 
     [theme.fn.largerThan('sm')]: {
       display: 'none',
@@ -58,6 +59,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   burger: {
+    marginLeft: 'auto',
     [theme.fn.largerThan('sm')]: {
       display: 'none',
     },
@@ -65,6 +67,8 @@ const useStyles = createStyles((theme) => ({
 
   link: {
     display: 'block',
+    position: 'relative',
+    zIndex: 2,
     lineHeight: 1,
     padding: `${rem(8)} ${rem(12)}`,
     borderRadius: theme.radius.sm,
